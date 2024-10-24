@@ -52,36 +52,35 @@ io.on('connection', (socket) => {
     }
   });
   
-  // Send message
   socket.on('send_message', async (data) => {
-    console.log('New message data:-----------------------------', data);
+    console.log('New message data:', data);
     const { conversationId, senderId, recipientId, content } = data;
-    console.log('Sender:', senderId, 'Recipient:', recipientId, 'Content:', content);
-
+  
     // Validate ObjectIds before proceeding
     if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(recipientId) || !mongoose.Types.ObjectId.isValid(conversationId)) {
       console.log('Invalid sender, recipient, or conversation ID');
       return;
     }
-
+  
     try {
-    
       const newMessage = new Message({
         sender: senderId,
         recipient: recipientId,
         content,
-        conversation: conversationId 
+        conversation: conversationId,
       });
       await newMessage.save();
-
-    
+  
+      // Populate the sender details
+      await newMessage.populate('sender', 'name profilePicture');
+  
+      // Emit the message with populated sender
       io.to(conversationId).emit('receive_message', newMessage);
       io.to(recipientId).emit('new_message_notification', { conversationId });
     } catch (error) {
       console.error('Error saving message:', error);
     }
   });
-
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });

@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, Container, CssBaseline, Toolbar } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
-import { lightTheme, darkTheme } from '../theme/theme';
+import { lightTheme, darkTheme } from '../theme/theme'; 
 import NavBar from './NavBar';
 import SideDrawer from './SideDrawer';
 import Footer from './Footer';
+
+const drawerWidth = 240;
 
 const Layout = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -26,7 +28,7 @@ const Layout = () => {
       <CssBaseline />
       <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
         {/* NavBar Component */}
-        <NavBar darkMode={darkMode} toggleTheme={toggleTheme} drawerOpen={drawerOpen} />
+        <NavBar darkMode={darkMode} toggleTheme={toggleTheme} drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
         
         <Box sx={{ display: 'flex', flexGrow: 1 }}>
           {/* SideDrawer Component */}
@@ -37,14 +39,13 @@ const Layout = () => {
             component="main"
             sx={{
               flexGrow: 1,
-              p: 3,  // Adjust the padding for better appearance
-              width: drawerOpen ? 'calc(100% - 240px)' : 'calc(100% - 60px)',  // Adjust width based on drawer state
-              transition: 'all 0.3s ease-in-out',  // Smooth transition for drawer and width
-              minHeight: '100vh',
-             
+              p: 3,
+              width: drawerOpen ? `calc(100% - ${drawerWidth}px)` : 'calc(100% - 60px)',  // Adjust width based on drawer state
+              transition: 'all 0.3s ease-in-out',
+              minHeight: 'calc(100vh - 64px - 64px)', // Adjust for AppBar and Footer heights
             }}
           >
-            <Toolbar />
+            <Toolbar /> {/* This is for spacing under the NavBar */}
             <Container>
               <Outlet />  {/* This will render the page content */}
             </Container>

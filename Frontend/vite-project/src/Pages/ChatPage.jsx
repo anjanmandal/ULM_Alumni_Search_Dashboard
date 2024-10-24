@@ -42,12 +42,11 @@ const ChatPage = () => {
     const fetchProfile = async () => {
       const response = await axios.get('/api/user/profile', { withCredentials: true });
       setCurrentUserId(response.data._id); // Store logged-in user ID
-      console.log(currentUserId)
     };
-
+  
     fetchProfile();
-  }, []);
-
+  }, []); // Remove unnecessary dependencies
+  
   // Fetch messages when the component loads
   useEffect(() => {
     const fetchMessages = async () => {
@@ -56,22 +55,24 @@ const ChatPage = () => {
       setRecipientId(response.data.recipientId);  // Store recipientId from backend
       setRecipientName(response.data.recipientName);
     };
-
+  
     fetchMessages();
-
+  
     // Join the chat room using conversationId
     socket.emit('join_room', { conversationId });
-
+  
     // Listen for incoming messages
     socket.on('receive_message', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
-
+  
     // Clean up the socket event listener on unmount
     return () => {
       socket.off('receive_message');
     };
-  }, [conversationId, currentUserId, recipientId]);
+  }, [conversationId]); // Only depend on conv
+
+
 
   // Send a new message
   const sendMessage = () => {
@@ -88,7 +89,7 @@ const ChatPage = () => {
     socket.emit('send_message', messageData);
 
     // Add the message locally to messages state without waiting for the server response
-    setMessages((prevMessages) => [...prevMessages, { ...messageData, sender: { _id: currentUserId } }]);
+    
 
     setNewMessage(''); // Clear the input field
   };
@@ -131,43 +132,51 @@ const ChatPage = () => {
 
       {/* Message list */}
       <List sx={{ flexGrow: 1, padding: '20px', overflowY: 'scroll', backgroundColor: '#fff', height: '50vh' }}>
-  {messages.map((msg) => {
-    const isCurrentUser = msg.sender._id === currentUserId;
+      {messages.map((msg) => {
+  console.log('Sender:', msg.sender);
+  
+  // Ensure msg.sender and msg.sender._id exist before calling .toString()
+  console.log('which is undefiend sender sender_id or current ',msg.sender,currentUserId)
+  const isCurrentUser = msg.sender && msg.sender._id && msg.sender._id === currentUserId;
+  
 
-    return (
-      <ListItem
-        key={msg._id}
+
+  return (
+    <ListItem
+      key={msg._id}
+      sx={{
+        justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
+        display: 'flex',
+        alignItems: 'flex-start',
+        marginBottom: '10px',
+      }}
+    >
+      {/* Only show avatar for recipient's messages */}
+      {!isCurrentUser && msg.sender && (
+        <Avatar
+          {...stringAvatar(msg.sender.name)}
+          sx={{ marginRight: '10px', alignSelf: 'flex-start' }}
+        />
+      )}
+
+      {/* Message content */}
+      <Box
         sx={{
-          justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
-          display: 'flex',
-          alignItems: 'flex-start', // Align items to the top
-          marginBottom: '10px',
+          padding: '10px',
+          borderRadius: '15px',
+          backgroundColor: isCurrentUser ? '#0084ff' : '#f1f0f0',
+          color: isCurrentUser ? '#fff' : '#000',
+          maxWidth: '60%',
+          textAlign: isCurrentUser ? 'right' : 'left',
         }}
       >
-        {/* Only show avatar for recipient's messages */}
-        {!isCurrentUser && (
-          <Avatar
-            {...stringAvatar(msg.sender.name)}
-            sx={{ marginRight: '10px', alignSelf: 'flex-start' }}
-          />
-        )}
+        <Typography variant="body1">{msg.content}</Typography>
+      </Box>
+    </ListItem>
+  );
+})}
 
-        {/* Message content */}
-        <Box
-          sx={{
-            padding: '10px',
-            borderRadius: '15px',
-            backgroundColor: isCurrentUser ? '#0084ff' : '#f1f0f0',
-            color: isCurrentUser ? '#fff' : '#000',
-            maxWidth: '60%',
-            textAlign: isCurrentUser ? 'right' : 'left',
-          }}
-        >
-          <Typography variant="body1">{msg.content}</Typography>
-        </Box>
-      </ListItem>
-    );
-  })}
+
 </List>
 
 

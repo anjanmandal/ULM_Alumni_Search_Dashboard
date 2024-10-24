@@ -5,17 +5,23 @@ const getProfile = async (req, res) => {
     const userId = req.user._id;
     const user = await User.findById(userId).select('-password'); // Fetch user without password
 
+    // Convert ObjectId to a string before sending to the client
+    const userObject = user.toObject();
+   
+    console.log("data--------------------------------------------------------------------",userObject);
+
     // Check if the user is an alumni
     if (user.role === 'alumni') {
       const alumni = await Alumni.findOne({ user: userId }); // Fetch alumni details for the user
-      res.json({ ...user.toObject(), alumni });
+      res.json({ ...userObject, alumni });
     } else {
-      res.json(user);
+      res.json(userObject);
     }
   } catch (error) {
     res.status(500).json({ message: 'Error fetching profile data', error });
   }
-  };
+};
+
   const getAlumniProfile = async (req, res) => {
     try {
       // Find the alumni profile and populate the 'user' field
