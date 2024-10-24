@@ -1,13 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Switch, Button, Avatar, Box } from '@mui/material';
-import { Brightness4, Brightness7, Logout, Menu as MenuIcon } from '@mui/icons-material'; // Import Menu Icon
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Switch,
+  Button,
+  Avatar,
+  Box,
+  useMediaQuery,
+} from '@mui/material';
+import {
+  Brightness4,
+  Brightness7,
+  Logout,
+  Menu as MenuIcon,
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 
 const drawerWidth = 240;
 
 const NavBar = ({ darkMode, toggleTheme, drawerOpen, toggleDrawer }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [user, setUser] = useState({
     name: '',
     profilePicture: '',
@@ -16,11 +35,13 @@ const NavBar = ({ darkMode, toggleTheme, drawerOpen, toggleDrawer }) => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get('/api/user/profile', { withCredentials: true });
+        const response = await axios.get('/api/user/profile', {
+          withCredentials: true,
+        });
         setUser({
           name: response.data.name,
           profilePicture: response.data.profilePicture
-            ? `https://ulm-alumni-search-dashboard-3.onrender.com${response.data.profilePicture}`
+            ? `http://localhost:5000${response.data.profilePicture}`
             : 'https://via.placeholder.com/40',
         });
       } catch (err) {
@@ -44,18 +65,17 @@ const NavBar = ({ darkMode, toggleTheme, drawerOpen, toggleDrawer }) => {
       position="fixed"
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        marginLeft: drawerOpen ? `${drawerWidth}px` : `60px`,
-        width: drawerOpen ? `calc(100% - ${drawerWidth}px)` : `calc(100% - 60px)`,
+        width: isMobile ? '100%' : drawerOpen ? `calc(100% - ${drawerWidth}px)` : 'calc(100% - 60px)',
         transition: 'width 0.3s ease, margin-left 0.3s ease',
       }}
     >
       <Toolbar>
         {/* Menu Icon for mobile screens */}
-        <IconButton 
-          color="inherit" 
-          edge="start" 
-          aria-label="menu" 
-          onClick={toggleDrawer} // This will toggle the drawer
+        <IconButton
+          color="inherit"
+          edge="start"
+          aria-label="menu"
+          onClick={toggleDrawer}
           sx={{ mr: 2, display: { xs: 'block', sm: 'none' } }} // Only show on mobile (xs)
         >
           <MenuIcon />
@@ -84,11 +104,7 @@ const NavBar = ({ darkMode, toggleTheme, drawerOpen, toggleDrawer }) => {
         </Box>
 
         {/* Logout Button */}
-        <Button
-          color="inherit"
-          onClick={handleLogout}
-          startIcon={<Logout />}
-        >
+        <Button color="inherit" onClick={handleLogout} startIcon={<Logout />}>
           Logout
         </Button>
       </Toolbar>

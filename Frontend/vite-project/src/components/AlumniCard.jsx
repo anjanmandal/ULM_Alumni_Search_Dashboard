@@ -1,20 +1,23 @@
+// AlumniCard.js
 import { Paper, Typography, Box, Button } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
-const AlumniCard = ({ alumni, onStartConversation }) => {
+const AlumniCard = ({ alumni, currentUserId, onStartConversation }) => {
+  const theme = useTheme();
+
   const userId = alumni.user ? alumni.user._id : null;
-  console.log(alumni.user.profilePicture);
 
- 
-
+  // Determine whether to show the chat option
+  const showChatOption = userId && userId !== currentUserId;
 
   return (
     <Paper
       elevation={3}
       sx={{
         width: { xs: '100%', sm: '250px', md: '220px' },  // Responsive width for different screen sizes
-        p: 2,
-        borderRadius: 4,
-        margin: 2,  // Ensure some margin around the card
+        p: theme.spacing(2),
+        borderRadius: theme.shape.borderRadius * 2,
+        margin: theme.spacing(2),
         transition: 'transform 0.3s ease-in-out',
         '&:hover': {
           transform: 'scale(1.05)',
@@ -23,49 +26,71 @@ const AlumniCard = ({ alumni, onStartConversation }) => {
         flexDirection: 'column',
         alignItems: 'center',
         textAlign: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: theme.palette.background.paper,
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, width: '100%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          mb: theme.spacing(2),
+          width: '100%',
+        }}
+      >
         <Box
           component="img"
-          src={alumni.user.profilePicture ? `https://ulm-alumni-search-dashboard-3.onrender.com${alumni.user.profilePicture}` : 'https://via.placeholder.com/150' }
+          src={
+            alumni.user && alumni.user.profilePicture
+              ? `http://localhost:5000${alumni.user.profilePicture}`
+              : 'https://via.placeholder.com/150'
+          }
           alt={`${alumni.name}'s profile picture`}
           sx={{
-            width: 100,     // Set a fixed width for the image
-            height: 100,    // Set a fixed height for the image
+            width: 100,
+            height: 100,
             borderRadius: '50%',
-            border: '4px solid #f0f0f0',
-            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-            objectFit: 'cover',  // Ensures image fits within the circular frame
+            border: `${theme.spacing(0.5)} solid ${theme.palette.grey[200]}`,
+            boxShadow: theme.shadows[3],
+            objectFit: 'cover',
           }}
         />
       </Box>
 
-      <Box sx={{ padding: '10px 0', textAlign: 'center' }}>
-        <Typography gutterBottom variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+      <Box sx={{ padding: theme.spacing(1, 0), textAlign: 'center' }}>
+        <Typography
+          gutterBottom
+          variant="h6"
+          sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}
+        >
           {alumni.name}
         </Typography>
-        <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
+        <Typography
+          variant="body2"
+          sx={{ color: theme.palette.text.secondary, mb: theme.spacing(1) }}
+        >
           {alumni.occupation}
         </Typography>
-        <Typography variant="body2" sx={{ fontStyle: 'italic', mb: 1 }}>
+        <Typography
+          variant="body2"
+          sx={{ fontStyle: 'italic', mb: theme.spacing(1) }}
+        >
           Class of {alumni.graduationYear}
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2 }}>
+        <Typography variant="body2" sx={{ mb: theme.spacing(2) }}>
           {alumni.degree}
         </Typography>
       </Box>
 
-      {userId && (
+      {/* Conditionally render the Chat button based on showChatOption */}
+      {showChatOption && (
         <Button
           variant="contained"
           color="primary"
           fullWidth
           sx={{
-            backgroundColor: '#3498db',
+            backgroundColor: theme.palette.primary.main,
             '&:hover': {
-              backgroundColor: '#2980b9',
+              backgroundColor: theme.palette.primary.dark,
             },
           }}
           onClick={() => onStartConversation(userId)}

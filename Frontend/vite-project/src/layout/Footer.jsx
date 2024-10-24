@@ -1,6 +1,11 @@
-import { AppBar, Toolbar, Typography,Box } from '@mui/material';
+// Footer.js
+import React from 'react';
+import { AppBar, Toolbar, Typography, Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 const Footer = () => {
+  const theme = useTheme();
+
   return (
     <Box
       component="footer"
@@ -9,16 +14,18 @@ const Footer = () => {
         position: 'fixed',
         bottom: 0,
         left: 0,
-        height: '64px',  // Adjust height if needed
-        backgroundColor: '#b71c1c',  // Example color
-        color: '#fff',
+        height: theme.spacing(8), // Adjust height if needed
+        backgroundColor: theme.palette.primary.main, // Use theme's primary color
+        color: theme.palette.primary.contrastText,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 1201, // Ensure it stays on top of other content
+        zIndex: theme.zIndex.appBar, // Ensure it stays on top of other content
       }}
     >
-      © 2024 Your Company Name. All Rights Reserved.
+      <Typography variant="body1" sx={{ color: 'inherit' }}>
+        © {new Date().getFullYear()} Your Company Name. All Rights Reserved.
+      </Typography>
     </Box>
   );
 };
