@@ -29,7 +29,7 @@ const AlumniCard = ({ alumni, onStartConversation }) => {
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, width: '100%' }}>
         <Box
           component="img"
-          src={alumni.user.profilePicture ? `http://localhost:5000${alumni.user.profilePicture}` : 'https://via.placeholder.com/150' }
+          src={alumni.user.profilePicture ? `https://ulm-alumni-search-dashboard-3.onrender.com${alumni.user.profilePicture}` : 'https://via.placeholder.com/150' }
           alt={`${alumni.name}'s profile picture`}
           sx={{
             width: 100,     // Set a fixed width for the image

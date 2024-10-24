@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import { styled } from '@mui/system';
 
-const socket = io('http://localhost:5000'); // Connect to the server
+const socket = io('https://ulm-alumni-search-dashboard-3.onrender.com'); // Connect to the server
 
 // Styled components similar to ConversationList
 const StyledPaper = styled(Paper)(({ theme }) => ({

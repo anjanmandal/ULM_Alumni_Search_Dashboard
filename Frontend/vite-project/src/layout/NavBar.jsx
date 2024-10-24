@@ -20,7 +20,7 @@ const NavBar = ({ darkMode, toggleTheme, drawerOpen, toggleDrawer }) => {
         setUser({
           name: response.data.name,
           profilePicture: response.data.profilePicture
-            ? `http://localhost:5000${response.data.profilePicture}`
+            ? `https://ulm-alumni-search-dashboard-3.onrender.com${response.data.profilePicture}`
             : 'https://via.placeholder.com/40',
         });
       } catch (err) {

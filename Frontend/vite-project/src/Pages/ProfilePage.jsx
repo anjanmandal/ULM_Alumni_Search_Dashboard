@@ -127,7 +127,7 @@ const ProfilePage = () => {
         <Box display="flex" flexDirection="column" alignItems="center">
           {/* Profile picture section */}
           <Avatar
-            src={user.profilePicture ? `http://localhost:5000${user.profilePicture}` : 'https://via.placeholder.com/150'}
+            src={user.profilePicture ? `https://ulm-alumni-search-dashboard-3.onrender.com${user.profilePicture}` : 'https://via.placeholder.com/150'}
             alt={user.name}
             sx={{ width: 120, height: 120, marginBottom: 2 }}
           />
